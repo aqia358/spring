@@ -1,0 +1,89 @@
+#set($page_title="Redis Monitor")
+<div class="container">
+	<div class="row">
+		<div class="col-md-12">
+			#set($name = $config.get(0).serviceName) 
+			#set($flag = true)
+			#foreach($config in $configs) 
+				#if($name != $config.serviceName)
+					#set($name = $config.serviceName) 
+					#if($flag)
+						#set($color = "success")
+						#set($flag = false)
+					#else 
+						#set($color = "info") 
+						#set($flag = true)
+					#end 
+				#end
+				#if($serviceName != $config.serviceName)
+					<h1 align="center"><div class="alert alert-$!color" role="alert">$config.serviceName</div></h1>
+<!-- 					<h1 align="center"><div class="text-$!color">$config.serviceName</div></h1> -->
+				#end
+				<table class="table table-bordered">
+					<tr>
+						<td rowspan="3" class="$!color">
+							<div><strong>$!config.serviceName</strong></div>
+							#set($serviceName = $config.serviceName)
+							<br>			
+							<div>$!{config.host}:$!config.port</div>
+							<br>
+							<div id="${config.host}${config.port}role" style="width: 200px" class="text-danger">
+								N/A
+							</div>
+							<div class="pull-right"><h6><span class="text-warning">V${config.version}</span></h6></div>
+						</td>
+						<th colspan="2" align="center">Redis Info</th>
+						<th colspan="6" align="center">Redis Performance</th>
+					</tr>
+					<tr>
+						<td>Memory</td>
+						<td>Keys</td>
+						<td>QPS</td>
+						<td>TimeAvg(μs)</td>
+						<td>Time50%</td>
+						<td>Time75%</td>
+						<td>Time90%</td>
+						<td>Time99%</td>
+					</tr>
+					<tr>
+						<td id="${config.host}${config.port}memory">N/A</td>
+						<td id="${config.host}${config.port}keys">N/A</td>
+						<td id="${config.host}${config.port}qps">N/A</td>
+						<td id="${config.host}${config.port}avg">N/A</td>
+						<td id="${config.host}${config.port}50">N/A</td>
+						<td id="${config.host}${config.port}75">N/A</td>
+						<td id="${config.host}${config.port}90">N/A</td>
+						<td id="${config.host}${config.port}99">N/A</td>
+					</tr>
+						<script>
+								$(function(){			
+								    function getJson() {
+										$.getJSON('#springUrl("/json?index=$velocityCount")', function(data) { 
+											if ("slave" == data.role) {
+												var role = "slave of " + data.masterHost + ":" + data.masterPort;	
+												$("#${config.host}${config.port}role").text(role);
+											} else {
+												$("#${config.host}${config.port}role").text(data.role);
+											}
+											$("#${config.host}${config.port}memory").text(data.memory);
+											$("#${config.host}${config.port}keys").text(data.keys);
+											$("#${config.host}${config.port}qps").text(data.qps);
+											$("#${config.host}${config.port}avg").text(data.timeAvg);
+											$("#${config.host}${config.port}50").text(data.time50);
+											$("#${config.host}${config.port}75").text(data.time75);
+											$("#${config.host}${config.port}90").text(data.time90);
+											$("#${config.host}${config.port}99").text(data.time99);
+											repeat();
+										});
+									}
+									function repeat() {
+										setTimeout(getJson,3000)
+									}
+									setTimeout(getJson,1)
+								})
+						</script>
+				</table>
+			#end
+		</div>
+	</div>
+</div>

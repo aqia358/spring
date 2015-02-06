@@ -1,0 +1,20 @@
+<html>
+    <head>
+        <title>有道DSP</title>
+        <meta http-equiv=content-type content='text/html; charset=UTF-8'>
+        <meta http-equiv='refresh' content='1;url="$!destinationUrl"'>
+    </head>
+    <body>
+        <a id='j' href='$!destinationUrl'></a>
+    </body>
+    <script>
+        (function() {
+            var a = document.getElementById('j');
+            if (!a.click) {
+                document.location = a.href;
+                return;
+            }
+            a.click();
+        })();
+    </script>
+</html>

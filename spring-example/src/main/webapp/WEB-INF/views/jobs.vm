@@ -1,0 +1,106 @@
+#set($page_title="Redis Monitor")
+<div class="container">
+	<div class="row">
+		<div class="col-md-12">
+			<h2>Job Manager</h2>
+			<form class="form-horizontal" role="form" method="post" action="job">
+				<div class="form-group">
+					<label for="inputPassword3" class="col-sm-1 control-label">Rule</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" name="query"
+							placeholder="Monitor expression" required >
+					</div>
+					<div class="col-sm-2">
+						<select name="type" class="form-control">
+							<option selected="selected">COUNT</option>
+							<option>MIN</option>
+							<option>MAX</option>
+							<option>MEAN</option>
+							<option value="TOTAL">TOTAL</option>
+						</select>
+					</div>
+					<div class="col-sm-2">
+						<select name="op" class="form-control">
+							<option selected="selected">></option>
+							<option>>=</option>
+							<option><</option>
+							<option><=</option>
+							<option>!=</option>
+							<option value="==">=</option>
+						</select>
+					</div>
+					<div class="col-sm-2">
+						<input pattern="\d+" type="text" class="form-control" name="expectation"
+							placeholder="Expectation" required title="Please input right number.">
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="inputPassword3" class="col-sm-1 control-label">Priority</label>
+					<div class="col-sm-4">
+						<select name="priority" class="form-control">
+							#foreach($priority in $prioritys)
+								<option value="${priority.id}">${priority.label}</option>
+							#end
+						</select>
+					</div>
+					<div class="col-sm-2">
+						<button type="submit" class="btn btn-default">Add</button>
+					</div>
+					<div class="col-sm-4">
+					</div>
+				</div>
+			</form>
+			<div class="panel panel-default">
+				<!-- Default panel contents -->
+				<div class="panel-heading">Running jobs</div>
+
+				<!-- Table -->
+				<table class="table">
+					<tr>
+						<td>QUERY</td>
+						<td>TYPE</td>
+						<td>OP</td>
+						<td>EXPECTATION</td>
+						<td>PROORITY</td>
+						<td>OPERATION</td>
+					</tr>
+					#foreach($job in $jobs)
+					<tr id="id${job.id}">
+						<td>${job.query}</td>
+						<td>${job.type}</td>
+						<td>${job.op}</td>
+						<td>${job.expectation}</td>
+						#foreach($priority in $prioritys)
+							#if(${priority.id}==${job.priority})
+								<td>${priority.label}</td>
+							#end
+						#end
+						<td>
+							<div class="btn-group">
+								<button type="button" onclick="deleteJob(${job.id})"
+									class="btn btn-default">Delete</button>
+<!-- 								<button type="button" class="btn btn-default">Middle</button> -->
+<!-- 								<button type="button" class="btn btn-default">Right</button> -->
+							</div>
+						</td>
+					</tr>
+					#end
+				</table>
+				<script type="text/javascript">
+					function deleteJob(id) {
+						if (confirm("确认要删除？")){
+							var url = '#springUrl("/job/del?id=")' + id;
+							$.get(url, function(data) {
+								if("success" == data) {
+									alert("Delete success.");
+									var trId = "#id" + id;
+									$(trId).remove();
+								}
+							});
+						}
+					}
+				</script>
+			</div>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,66 @@
+#set($page_title="Layout Test")
+<div class="container">
+	<div class="row">
+		<div class="col-md-12">
+			<table class="table table-striped">
+				<tr>
+					<th>NO.</th>
+					<th>Name</th>
+					<th>Host</th>
+					<th>Port</th>
+					<th>QPS</th>
+					<th>TimeAvg(μs)</th>
+					<th>Time50%</th>
+					<th>Time75%</th>
+					<th>Time90%</th>
+					<th>Time99%</th>
+				</tr>
+				#set($name = $config.get(0).serviceName)
+				#set($flag = true)
+				#foreach($config in $configs)
+					#if($name != $config.serviceName)
+						#set($name = $config.serviceName)
+						#if($flag)
+							#set($color = "success")
+							#set($flag = false)
+						#else
+							#set($color = "active")
+							#set($flag = true)
+						#end
+					#end
+					<tr class="$!color">
+						<td class="warning">$velocityCount</td>
+						<td id="tt">$!config.serviceName</td>
+						<td>$!config.host</td>
+						<td>$!config.port</td>
+						<td id="${config.host}${config.port}qps">N/A</td>
+						<td id="${config.host}${config.port}avg">N/A</td>
+						<td id="${config.host}${config.port}50">N/A</td>
+						<td id="${config.host}${config.port}75">N/A</td>
+						<td id="${config.host}${config.port}90">N/A</td>
+						<td id="${config.host}${config.port}99">N/A</td>
+						<script>
+							$(function(){			
+							    function getJson() {
+									$.getJSON('#springUrl("/json?index=$velocityCount")', function(data) { 
+										$("#${config.host}${config.port}qps").text(data.qps);
+										$("#${config.host}${config.port}avg").text(data.timeAvg);
+										$("#${config.host}${config.port}50").text(data.time50);
+										$("#${config.host}${config.port}75").text(data.time75);
+										$("#${config.host}${config.port}90").text(data.time90);
+										$("#${config.host}${config.port}99").text(data.time99);
+										repeat();
+									});
+								}
+								function repeat() {
+									setTimeout(getJson,3000)
+								}
+								setTimeout(getJson,1)
+							})
+						</script>
+					</tr>
+				#end
+			</table>
+		</div>
+	</div>
+</div>
