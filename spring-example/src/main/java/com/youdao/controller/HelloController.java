@@ -19,6 +19,7 @@ public class HelloController {
 
     @RequestMapping(value = "/index")
     public String index() {
+        
         return "index.jsp";
     }
 }
