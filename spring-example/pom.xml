@@ -2,7 +2,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.youdao</groupId>
-    <artifactId>spring</artifactId>
+    <artifactId>spring-example</artifactId>
     <version>1.1.0</version>
     <name>Recommend Web</name>
     <distributionManagement>
@@ -147,7 +147,7 @@
         </dependency>
     </dependencies>
     <build>
-        <finalName>moon-client</finalName>
+        <finalName>spring-example</finalName>
     </build>
     <repositories>
         <repository>
